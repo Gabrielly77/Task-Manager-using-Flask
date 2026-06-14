@@ -1,0 +1,15 @@
+deploy-stage:
+    needs: security-analysis
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' # Só roda quando houver um Pull Request
+    steps:
+      - name: Deploy em Estágio (Review App)
+        run: |
+          echo "Criando ambiente temporário de stage..."
+          docker run -d -p 8080:5000 --name stage-app task-manager
+      
+      - name: DAST (OWASP ZAP) no Estágio
+        run: |
+          echo "Executando DAST..."
+          # Aqui é onde o ZAP rodaria o teste contra o ambiente recém criado
+          docker run -t owasp/zap2docker-stable zap-baseline.py -t http://192.168.98.10:8080 || true
