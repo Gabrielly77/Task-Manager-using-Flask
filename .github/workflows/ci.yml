@@ -29,3 +29,14 @@ jobs:
         run: |
           echo "Executando DAST..."
           docker run -t owasp/zap2docker-stable zap-baseline.py -t http://192.168.98.10:8080 || true
+
+  security-monitoring:
+    needs: deploy-stage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Simulação de Monitoramento (Wazuh/ELK)
+        run: |
+          echo "Conectando ao agente de log..."
+          echo "Analisando logs de autenticação para detectar força bruta..."
+          # Aqui simulamos a leitura de um log de erro
+          grep "FAILED LOGIN" app.log || echo "Nenhuma tentativa de força bruta detectada no momento."
